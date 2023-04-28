@@ -13,7 +13,7 @@ public class Incorrect {
         fr.setLayout(new GridLayout(3, 1));
         fr.add(lb); 
         fr.add(lb2);
-        fr.add(pk);
+        fr.add(ok);
         fr.setBounds(600, 300, 300, 200);
         fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         fr.setVisible(true);
