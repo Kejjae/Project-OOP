@@ -186,7 +186,7 @@ public class Staff implements ActionListener{
         
         ///////////////////// inside////////////////////
         frame1 = new JInternalFrame("Borrowed History", true, true, true, true);
-        frame2 = new JInternalFrame("Return History", true, true, true, true);
+        frame2 = new JInternalFrame("Returned History", true, true, true, true);
         frame3 = new JInternalFrame("Manage Books", true, true, true, true);
         //frame4 = new JInternalFrame("Profile", true, true, true, true);
    
