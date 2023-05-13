@@ -1,27 +1,33 @@
+
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
-import java.util.Calendar;
+import java.util.*;
 import java.util.Date;
 import javax.swing.table.*;
+import insert.Insert;
+
 public class Staff implements ActionListener{
     private JFrame frame, frameinsert, framedel;
     private JDesktopPane desktopPane;
     private JInternalFrame frame1, frame2, frame3, frame4;
-    private JPanel panelf1, panelf2, panelf3, emptyf2, emptyf3, emptyf4, return1, return2, return3, emp1, emp2, emp3, mn1, mn2, mn3, emp4, emp5, emp6, pf1, pf2, 
-            insert1, insert2, insert3, insert4, insert5, del1, del2, del3;
+    private JPanel panelf1, panelf2, panelf3, emptyf2, emptyf3, emptyf4, return1, return2, return3, emp1, emp2, emp3, mn1, mn2, mn3, emp4, emp5, emp6, del1, del2, del3, insert1;
     private JMenuBar mb;
     private JMenu file, edit, filehis;
     private JMenuItem fileborrow, filereturn, manage, logout;
-    private JSpinner date, datereturn, amount;
+    private JSpinner date, datereturn;
     private JTable table, tablereturn, managetable;
-    private JButton add, delete, insert, auswischen;
-    private JTextField txt, mntxt, name, id, expic, bookname, typeisbn, delbook, delmai;
-    private JLabel datetxt, total, returndate, ISBN, nameb, isbn, genres, delname, delisbn, number;
-    private JComboBox genre;
+    private JButton add, delete, insert, auswischen, search;
+    private JTextField txt, mntxt, delbook, delmai;
+    private JLabel datetxt, total, returndate, ISBN,delname, delisbn;
+    private JScrollPane scrollPane;
+    private Insert newpanel;
+    private int line = 0;
+
     public Staff(){
         frame = new JFrame("Ya Luem Khuen");
         desktopPane = new JDesktopPane();
+        newpanel = new Insert();
         
         mb = new JMenuBar();
         file = new JMenu("File");
@@ -50,9 +56,10 @@ public class Staff implements ActionListener{
         logout.addActionListener(this);
        
         ////////////////example////////////////////////////////////////////
-        String[][] row = {{"1.", "65070026", "ONWARD", "1332", "30"},
-                         {"2.", "65070026", "About a boy", "12345", "20"}};
-        String[] col = {"No", "Membership", "Book Name", "ISBN", "Price"};
+        
+        String[][] row = {{"1.", "123456789", "ONWARD", "1332"},
+                         {"2.", "123456789", "About a boy", "12345"}};
+        String[] col = {"No", "Membership", "Book Name", "ISBN"};
         table = new JTable(row, col);
         
         panelf1 = new JPanel();
@@ -131,12 +138,32 @@ public class Staff implements ActionListener{
         //return3.add(backreturn);
         /////////////////// end frame2 /////////////////////
         
-        String[][] mn = {{"1.", "1332", "ONWARD", "Fantasy", "2"}};
-        String[] colmn = {"No", "ISBN", "Book Name", "Genres", "Left"};
-        managetable = new JTable(mn, colmn);
+        
+       
+        //String[][] mn = {{"1.", "1332", "ONWARD", "Fantasy", "2"}};
+        //String[] colmn = {"No", "ISBN", "Book Name", "Genres", "Left"};
+        managetable = new JTable();
+        //scrollPane.setViewportView(managetable);
+        
+        DefaultTableModel mn = (DefaultTableModel)managetable.getModel();
+        mn.addColumn("No");
+        mn.addColumn("ISBN");
+        mn.addColumn("BOOK Name");
+        mn.addColumn("Genres");
+        mn.addColumn("Left");
+        
+        mn.addRow(new Object[0]);
+        mn.setValueAt(line + 1, line, 0);
+        mn.setValueAt("9783125738300", line, 1);
+        mn.setValueAt("A BOUT A BOY", line, 2);
+        mn.setValueAt("Novel", line, 3);
+        mn.setValueAt("2", line, 4);
+        line = line + 1;
+        
+        
         
         mntxt = new JTextField();
-        mntxt.setBounds(100, 50, 150, 30);
+        mntxt.setBounds(80, 50, 150, 35);
         
         ISBN = new JLabel("ISBN: ");
         ISBN.setBounds(50, 50, 80, 40);
@@ -145,10 +172,42 @@ public class Staff implements ActionListener{
         //backmn.setBounds(10, 50, 100, 50);
         add = new JButton("Add");
         add.setBounds(280, 55, 70, 40);
-        add.addActionListener(this);
+        add.addActionListener(new ActionListener(){
+        @Override
+            public void actionPerformed(ActionEvent e) {
+             frameinsert = new JFrame("New");
+             frameinsert.setLayout(new BorderLayout());
+             frameinsert.setLocation(370, 200);
+             insert = new JButton("Insert");
+             insert1 = new JPanel();
+             insert1.add(insert);
+             insert.addActionListener(new ActionListener(){
+                 @Override
+                 public void actionPerformed(ActionEvent ex){
+                     mn.addRow(new Object[0]);
+                     mn.setValueAt(line + 1, line, 0);
+                     mn.setValueAt(newpanel.getTypeIsbn().getText(), line, 1);
+                     mn.setValueAt(newpanel.getBookName().getText(), line, 2);
+                     mn.setValueAt(newpanel.getGenre().getSelectedItem().toString(), line, 3);
+                     mn.setValueAt(Integer.parseInt(newpanel.getAmount().getText()), line, 4);
+                     line = line + 1;
+                     
+                     
+                 }
+             });
+             frameinsert.add(newpanel);
+             frameinsert.add(insert1, BorderLayout.SOUTH);
+             frameinsert.setSize(250, 250);
+             frameinsert.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+             frameinsert.setVisible(true);
+        }
+    });
         delete = new JButton("Delete");
         delete.setBounds(355, 55, 70, 40);
         delete.addActionListener(this);
+        search = new JButton("search");
+        search.addActionListener(this);
+        search.setBounds(235, 56, 67, 30);
         
         mn1 = new JPanel();
         mn2 = new JPanel();
@@ -160,7 +219,7 @@ public class Staff implements ActionListener{
         mn2.setLayout(new BorderLayout());
         mn3.setLayout(null);
         
-        mn1.add(ISBN); mn1.add(mntxt); 
+        mn1.add(ISBN); mn1.add(mntxt); mn1.add(search);
         mn2.add(emp4, BorderLayout.WEST);
         mn2.add(emp5, BorderLayout.EAST);
         mn2.add(emp6, BorderLayout.SOUTH);
@@ -243,51 +302,7 @@ public class Staff implements ActionListener{
         }else if (e.getSource().equals(manage)){
             desktopPane.add(frame3);
         }else if (e.getSource().equals(logout)){
-            System.exit(0);
-        }else if (e.getSource().equals(add)){
-            frameinsert = new JFrame("New");
-            frameinsert.setLayout(new GridLayout(5, 1));
-            frameinsert.setLocation(370, 200);
-            insert1 = new JPanel();
-            insert2 = new JPanel();
-            insert3 = new JPanel();
-            insert4 = new JPanel();
-            insert5 = new JPanel();
-            insert1.setLayout(new GridLayout(1, 2));
-            insert2.setLayout(new GridLayout(1, 2));
-            insert3.setLayout(new GridLayout(1, 2));
-            insert4.setLayout(new GridLayout(1, 2));
-            nameb = new JLabel("   Book Name:");
-            isbn = new JLabel("   ISBN:");
-            genres = new JLabel("   Genre:");
-            number = new JLabel("   Total:");
-            bookname = new JTextField(); 
-            typeisbn = new JTextField();
-            amount = new JSpinner();
-            genre = new JComboBox();
-            genre.addItem("Novel");
-            genre.addItem("Fantasy");
-            genre.addItem("Tale");
-            genre.addItem("Literature");
-            genre.addItem("Horror");
-            genre.setSelectedItem("Novel");
-            insert = new JButton("Insert");
-            
-            insert1.add(nameb); insert1.add(bookname);
-            insert2.add(isbn); insert2.add(typeisbn);
-            insert3.add(genres); insert3.add(genre);
-            insert4.add(number); insert4.add(amount);
-            insert5.add(insert);
-            
-            frameinsert.add(insert1);
-            frameinsert.add(insert2);
-            frameinsert.add(insert3);
-            frameinsert.add(insert4);
-            frameinsert.add(insert5);
-            frameinsert.setSize(250, 250);
-            frameinsert.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            frameinsert.setVisible(true);
-            
+            System.exit(0);            
         }else if (e.getSource().equals(delete)){
             framedel = new JFrame("Delete");
             framedel.setLayout(new GridLayout(3, 1));
